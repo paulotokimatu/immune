@@ -1,5 +1,7 @@
-var webpack = require('webpack');
+const path = require('path');
+const webpack = require('webpack');
 const HtmlWebPackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   devServer: {
@@ -13,7 +15,10 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: "./src/index.html",
       filename: "./index.html"
-    })
+    }),
+    new CopyWebpackPlugin([{
+      from: './src/assets', to: 'assets'
+    }])
   ],
   module: {
     rules: [

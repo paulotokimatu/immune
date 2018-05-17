@@ -1,16 +1,15 @@
 import Phaser from 'phaser';
 
-var config = {
+import IngameScene from './scenes/ingame.scene';
+
+const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
   physics: {
-      default: 'arcade',
-      arcade: {
-          gravity: { y: 200 }
-      }
+      default: 'arcade'
   },
-  scene: ingameScene
+  scene: IngameScene
 };
 
-var game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
