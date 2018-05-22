@@ -10,12 +10,13 @@ export default class Unit extends Phaser.GameObjects.Sprite {
 
     this.lastShoot = 0;
     this.hp = 200;
+    this.cost = 20;
 
     this.scene.physics.add.collider(this.unitBullets, this.scene.enemyGroup, this.enemyHitCallback, null, this.scene);
   }
 
   update(time, delta) {
-    if (time - this.lastShoot >= 500) {
+    if (time - this.lastShoot >= 1000) {
       this.lastShoot = time;
       this.shoot();
     }
@@ -24,11 +25,6 @@ export default class Unit extends Phaser.GameObjects.Sprite {
         unit.update();
       }
     )
-    
-    // Phaser.Actions.Call(this.unitBullets.children, (bullet) => {
-    //   console.log(bullet.a);
-    //   bullet.update();
-    // }, this.scene);
   }
 
   enemyHitCallback(bullet, enemy) {

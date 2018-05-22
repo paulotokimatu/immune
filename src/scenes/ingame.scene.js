@@ -1,5 +1,7 @@
 import Unit from "../sprites/unit";
 import Enemy from "../sprites/enemy";
+import PlayerState from "../states/player.state";
+import makeAnimations from "../animations/animations";
 
 class IngameScene extends Phaser.Scene {
   constructor() {
@@ -8,6 +10,9 @@ class IngameScene extends Phaser.Scene {
     });
 
     this.enemyInterval = 0;
+    this.cost = {
+      unit: 20
+    };
   }
 
   preload() {
@@ -25,28 +30,18 @@ class IngameScene extends Phaser.Scene {
   }
 
   create() {
+    makeAnimations(this);
+    
+    this.playerState = new PlayerState;
     this.fillBackground();
 
-    this.keys = {
-      isAnyPressed: this.input.activePointer.isDown,
-      up: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP),
-      left: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT),
-      right: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT),
-      down: this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN),
-    };
+    this.moneyText = this.add.text(10, 10, this.playerState.money, { font: '48px Arial', fill: '#FFFFFF' });
 
-    this.text = this.add.text(10, 10, 'sadadas', { font: '48px Arial', fill: '#000000' });
-
-    this.input.on('pointerup', this.clicked, this);
+    this.input.on('pointerup', this.onAddUnit, this);
 
     this.unitGroup = this.physics.add.group();
     this.enemyGroup = this.physics.add.group();
     // this.unit.setInteractive();
-  }
-
-  clicked(e) {
-    const newUnit = new Unit({scene: this, x: e.x, y: e.y, key: 'unit'});
-    this.unitGroup.add(newUnit);
   }
 
   update(time, delta) {
@@ -59,13 +54,13 @@ class IngameScene extends Phaser.Scene {
       enemy.update();
     }, this);
 
-    if (time - this.enemyInterval >= 5000) {
-      let enemyY = Math.random() * 600 + 10;
-      this.enemyInterval = time;
-      let test = new Enemy({scene: this, x: 700, y: enemyY, key: 'macrofago'});
-      test.scaleX = -1;
-      this.enemyGroup.add(test);
-    }
+    // if (time - this.enemyInterval >= 5000) {
+    //   let enemyY = Math.random() * 600 + 10;
+    //   this.enemyInterval = time;
+    //   let test = new Enemy({scene: this, x: 700, y: enemyY, key: 'macrofago'});
+    //   test.scaleX = -1;
+    //   this.enemyGroup.add(test);
+    // }
   }
 
   fillBackground() {
@@ -73,6 +68,15 @@ class IngameScene extends Phaser.Scene {
       for(let j = 0; j < 600; j = j + 32) {
         this.add.sprite(i, j, 'grass-bg').setOrigin(0,0).setAlpha(0.7);
       }
+    }
+  }
+
+  onAddUnit(e) {
+    if(this.playerState.money >= this.cost.unit) {
+      const newUnit = new Unit({scene: this, x: e.x, y: e.y, key: 'unit'});
+      this.unitGroup.add(newUnit);
+      this.playerState.changeMoney(-newUnit.cost);
+      this.moneyText.setText(this.playerState.money);
     }
   }
 }
