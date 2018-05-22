@@ -21,8 +21,8 @@ export default class Unit extends Phaser.GameObjects.Sprite {
       this.shoot();
     }
 
-    this.unitBullets.children.entries.forEach((unit) => {
-        unit.update();
+    this.unitBullets.children.entries.forEach((bullet) => {
+        bullet.update();
       }
     )
   }

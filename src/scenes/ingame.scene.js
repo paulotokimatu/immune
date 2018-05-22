@@ -1,5 +1,6 @@
 import Unit from "../sprites/unit";
 import Enemy from "../sprites/enemy";
+import UnitSelection from "../sprites/unitSelection";
 import PlayerState from "../states/player.state";
 import makeAnimations from "../animations/animations";
 
@@ -19,6 +20,7 @@ class IngameScene extends Phaser.Scene {
     this.load.image('grass-bg', '../assets/grass.png');
     this.load.image('unit', '../assets/star.png');
     this.load.image('bullet', '../assets/bomb.png');
+    this.load.image('block', '../assets/block.png');
     // this.load.spritesheet('enemy', 
     //     '../assets/dude.png',
     //     { frameWidth: 32, frameHeight: 48 }
@@ -39,9 +41,11 @@ class IngameScene extends Phaser.Scene {
 
     this.input.on('pointerup', this.onAddUnit, this);
 
+    this.unitSelectionGroup = this.add.group();
+    this.unitSelectionGroup.add(new UnitSelection({scene: this, x: 500, y: 500, key: 'block'}));
+
     this.unitGroup = this.physics.add.group();
     this.enemyGroup = this.physics.add.group();
-    // this.unit.setInteractive();
   }
 
   update(time, delta) {
@@ -72,7 +76,7 @@ class IngameScene extends Phaser.Scene {
   }
 
   onAddUnit(e) {
-    if(this.playerState.money >= this.cost.unit) {
+    if(this.playerState.clickActive && this.playerState.money >= this.cost.unit) {
       const newUnit = new Unit({scene: this, x: e.x, y: e.y, key: 'unit'});
       this.unitGroup.add(newUnit);
       this.playerState.changeMoney(-newUnit.cost);
