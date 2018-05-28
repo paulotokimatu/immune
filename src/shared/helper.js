@@ -1,3 +1,5 @@
-export default function helper() {
-  console.log('test');
+export default class Helper {
+  updateAllChildren() {
+    
+  }
 }

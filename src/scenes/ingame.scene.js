@@ -1,5 +1,6 @@
 import Unit from "../sprites/unit";
 import Enemy from "../sprites/enemy";
+import UnitPreview from "../images/unitPreview";
 import UnitSelection from "../sprites/unitSelection";
 import PlayerState from "../states/player.state";
 import makeAnimations from "../animations/animations";
@@ -11,6 +12,8 @@ class IngameScene extends Phaser.Scene {
     });
 
     this.enemyInterval = 0;
+    this.enemyCoordinates = {
+    }
     this.cost = {
       unit: 20
     };
@@ -45,19 +48,17 @@ class IngameScene extends Phaser.Scene {
     this.unitSelectionGroup.add(new UnitSelection({scene: this, x: 500, y: 500, key: 'block'}));
 
     this.unitGroup = this.physics.add.group();
+    this.unitPreviewGroup = this.physics.add.group();
     this.enemyGroup = this.physics.add.group();
   }
 
   update(time, delta) {
-    const units = this.unitGroup.getChildren();
-    Phaser.Actions.Call(units, (unit)  =>{
-      unit.update(time, delta);
-    }, this);
+    this.updateAllChildren(this.unitGroup, time, delta);
+    this.updateAllChildren(this.enemyGroup, time, delta);
 
-    Phaser.Actions.Call(this.enemyGroup.getChildren(), (enemy)  =>{
-      enemy.update();
-    }, this);
-
+    if (this.playerState.clickActive) {
+      this.updateAllChildren(this.unitPreviewGroup, time, delta);
+    }
     // if (time - this.enemyInterval >= 5000) {
     //   let enemyY = Math.random() * 600 + 10;
     //   this.enemyInterval = time;
@@ -82,6 +83,12 @@ class IngameScene extends Phaser.Scene {
       this.playerState.changeMoney(-newUnit.cost);
       this.moneyText.setText(this.playerState.money);
     }
+  }
+
+  updateAllChildren(group, time, delta) {
+    Phaser.Actions.Call(group.getChildren(), (single)  =>{
+      single.update(time, delta);
+    }, this);
   }
 }
 
