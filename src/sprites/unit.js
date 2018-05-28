@@ -22,7 +22,7 @@ export default class Unit extends Phaser.GameObjects.Sprite {
     }
 
     this.unitBullets.children.entries.forEach((bullet) => {
-        bullet.update();
+        bullet.update(time, delta);
       }
     )
   }

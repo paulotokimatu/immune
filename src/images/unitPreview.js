@@ -1,4 +1,4 @@
-export default class Bullet extends Phaser.GameObjects.Image {
+export default class UnitPreview extends Phaser.GameObjects.Image {
   constructor(config) {
     super(config.scene, config.x, config.y, config.key);
     config.scene.physics.world.enable(this);
@@ -11,6 +11,10 @@ export default class Bullet extends Phaser.GameObjects.Image {
       this.scene.physics.moveTo(this, this.scene.input.x, this.scene.input.y, null, 50);
       return;
     }
+    this.destroy();
+  }
+
+  remove() {
     this.destroy();
   }
 }

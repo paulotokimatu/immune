@@ -45,10 +45,9 @@ class IngameScene extends Phaser.Scene {
     this.input.on('pointerup', this.onAddUnit, this);
 
     this.unitSelectionGroup = this.add.group();
-    this.unitSelectionGroup.add(new UnitSelection({scene: this, x: 500, y: 500, key: 'block'}));
+    this.unitSelectionGroup.add(new UnitSelection({scene: this, x: 500, y: 500, key: 'block', cost: 20}));
 
     this.unitGroup = this.physics.add.group();
-    this.unitPreviewGroup = this.physics.add.group();
     this.enemyGroup = this.physics.add.group();
   }
 
@@ -57,7 +56,7 @@ class IngameScene extends Phaser.Scene {
     this.updateAllChildren(this.enemyGroup, time, delta);
 
     if (this.playerState.clickActive) {
-      this.updateAllChildren(this.unitPreviewGroup, time, delta);
+      this.unitPreview.update();
     }
     // if (time - this.enemyInterval >= 5000) {
     //   let enemyY = Math.random() * 600 + 10;
@@ -80,7 +79,9 @@ class IngameScene extends Phaser.Scene {
     if(this.playerState.clickActive && this.playerState.money >= this.cost.unit) {
       const newUnit = new Unit({scene: this, x: e.x, y: e.y, key: 'unit'});
       this.unitGroup.add(newUnit);
+      this.unitPreview.remove();
       this.playerState.changeMoney(-newUnit.cost);
+      this.playerState.changeClickActive(!this.playerState.clickActive);
       this.moneyText.setText(this.playerState.money);
     }
   }
