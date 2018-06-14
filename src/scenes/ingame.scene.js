@@ -37,18 +37,20 @@ class IngameScene extends Phaser.Scene {
   create() {
     makeAnimations(this);
     
-    this.playerState = new PlayerState;
     this.fillBackground();
 
+    this.playerState = new PlayerState;
     this.moneyText = this.add.text(10, 10, this.playerState.money, { font: '48px Arial', fill: '#FFFFFF' });
 
-    this.input.on('pointerup', this.onAddUnit, this);
-
-    this.unitSelectionGroup = this.add.group();
-    this.unitSelectionGroup.add(new UnitSelection({scene: this, x: 500, y: 500, key: 'block', cost: 20}));
-
+    this.unitButtonsGroup = this.add.group();
     this.unitGroup = this.physics.add.group();
+    this.selectedUnitsGroup = this.physics.add.group();
     this.enemyGroup = this.physics.add.group();
+
+    this.unitButtonsGroup.add(new UnitSelection({scene: this, x: 500, y: 500, key: 'block', cost: 20}));
+
+    this.input.mouse.disableContextMenu();
+    this.input.on('pointerdown', this.onMouseClick, this);
   }
 
   update(time, delta) {
@@ -75,7 +77,15 @@ class IngameScene extends Phaser.Scene {
     }
   }
 
-  onAddUnit(e) {
+  onMouseClick(e) {
+    if (e.leftButtonDown()) {
+      this.addUnit(e);
+    } else if (e.rightButtonDown()) {
+      this.moveUnits(e);
+    }
+  }
+
+  addUnit(e) {
     if(this.playerState.clickActive && this.playerState.money >= this.cost.unit) {
       const newUnit = new Unit({scene: this, x: e.x, y: e.y, key: 'unit'});
       this.unitGroup.add(newUnit);
@@ -84,6 +94,13 @@ class IngameScene extends Phaser.Scene {
       this.playerState.changeClickActive(!this.playerState.clickActive);
       this.moneyText.setText(this.playerState.money);
     }
+  }
+
+  moveUnits(e) {
+    Phaser.Actions.Call(this.selectedUnitsGroup.getChildren(), (unit)  =>{
+      console.log('test');
+      unit.moveToMouse(e);
+    }, this);
   }
 
   updateAllChildren(group, time, delta) {

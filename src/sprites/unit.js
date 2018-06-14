@@ -5,6 +5,7 @@ export default class Unit extends Phaser.GameObjects.Sprite {
     super(config.scene, config.x, config.y, config.key);
     config.scene.physics.world.enable(this);
     config.scene.add.existing(this);
+    this.setInteractive();
 
     this.unitBullets = this.scene.physics.add.group();
 
@@ -13,6 +14,8 @@ export default class Unit extends Phaser.GameObjects.Sprite {
     this.cost = 20;
 
     this.scene.physics.add.collider(this.unitBullets, this.scene.enemyGroup, this.enemyHitCallback, null, this.scene);
+
+    this.on('pointerup', this.onSelection, this);
   }
 
   update(time, delta) {
@@ -34,5 +37,15 @@ export default class Unit extends Phaser.GameObjects.Sprite {
 
   shoot() {
     this.unitBullets.add(new Bullet({scene: this.scene, x: this.x + 15, y: this.y, key: 'bullet'}));
+  }
+
+  onSelection() {
+    this.scene.selectedUnitsGroup.add(this);
+    this.setTint(0x7878ff);
+  }
+
+  moveToMouse(e) {
+    // Use moveToObject
+    this.scene.physics.moveTo(this, e.x, e.y, null, 500);
   }
 }
